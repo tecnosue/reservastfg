@@ -17,7 +17,10 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         if ($user->rol === 'administrador') {
-            return Inertia::render('DashboardAdmin');
+            return Inertia::render('DashboardAdmin', [
+                'zonas' => Zona::all(),
+            ]);
+           
         } else {
             return Inertia::render('DashboardUsuario', [
                 'zonas' => Zona::all(),

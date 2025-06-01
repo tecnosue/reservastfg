@@ -1,6 +1,11 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
+
+// Definimos las 'props' que este componente recibe desde el controlador
+defineProps({
+    zonas: Array,
+});
 </script>
 
 <template>
