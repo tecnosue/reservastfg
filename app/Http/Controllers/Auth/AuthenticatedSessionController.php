@@ -32,6 +32,14 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        $user = Auth::user();
+
+        if (!$user->activo) {
+            Auth::logout(); // Desloguear al usuario si no está activo
+            return redirect()->route('pendiente');
+        }
+
+
 
         return redirect()->intended(route('dashboard', absolute: false));
     }

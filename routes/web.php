@@ -28,6 +28,10 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/pendiente', function () {
+    return Inertia::render('Auth/PendienteActivacion');
+})->name('pendiente');
+
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
@@ -38,6 +42,11 @@ Route::get('/zonas', [ZonaController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('zonas.index');
 
+    
+
+
+    
+
 // Rutas de Zonas SÓLO para el administrador
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/zonas/create', [ZonaController::class, 'create'])->name('zonas.create');
@@ -45,15 +54,17 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/zonas/{zona}', [ZonaController::class, 'edit'])->name('zonas.edit');
     Route::put('/zonas/{zona}', [ZonaController::class, 'update'])->name('zonas.update');
     Route::delete('/zonas/{zona}', [ZonaController::class, 'destroy'])->name('zonas.destroy');
+
 });
 
 
 // --- Rutas de Reservas (para usuarios autenticados) ---
-Route::middleware(['auth', 'verified'])->group(function() {
+Route::middleware(['auth', 'verified', 'activo'])->group(function() {
     Route::get('/mis-reservas', [ReservaController::class, 'index'])->name('reservas.index');
     Route::get('/zonas/{zona}/reservar', [ReservaController::class, 'create'])->name('reservas.create');
     Route::post('/reservas', [ReservaController::class, 'store'])->name('reservas.store');
     Route::delete('/reservas/{reserva}', [ReservaController::class, 'destroy'])->name('reservas.destroy');
+    
 });
 
 

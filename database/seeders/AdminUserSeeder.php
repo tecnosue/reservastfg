@@ -18,6 +18,7 @@ class AdminUserSeeder extends Seeder
             'email' => 'admin@reservas.com',
             'password' => Hash::make('admin123'), 
             'rol' => 'administrador',
+            'activo' => true,
         ]);
     }
 }
