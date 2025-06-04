@@ -1,10 +1,17 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { Head, Link } from "@inertiajs/vue3";
+import { router } from "@inertiajs/vue3"; // Importa el router de Inertia
+
+function eliminarZona(zonaId) {
+    if (window.confirm("¿Seguro que quieres eliminar esta zona?")) {
+        router.delete(route("zonas.destroy", zonaId));
+    }
+}
 
 // El controlador le pasa una 'prop' llamada 'zonas' a esta vista
 defineProps({
-    zonas: Array
+    zonas: Array,
 });
 </script>
 
@@ -17,7 +24,10 @@ defineProps({
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                     Gestión de Zonas Comunes
                 </h2>
-                <Link :href="route('zonas.create')" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700">
+                <Link
+                    :href="route('zonas.create')"
+                    class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700"
+                >
                     + Crear Zona
                 </Link>
             </div>
@@ -26,31 +36,70 @@ defineProps({
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <!--comprueba si el objeto $page.props.flash existe y si tiene la propiedad message -->
-                <div v-if="$page.props.flash && $page.props.flash.message" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    <span class="block sm:inline">{{ $page.props.flash.message }}</span>
+                <div
+                    v-if="$page.props.flash && $page.props.flash.message"
+                    class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4"
+                    role="alert"
+                >
+                    <span class="block sm:inline">{{
+                        $page.props.flash.message
+                    }}</span>
                 </div>
 
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900 space-y-4">
-                        <div v-for="zona in zonas" :key="zona.id" class="flex items-center space-x-4 border-b last:border-b-0 pb-4">
-                            
-                            <img 
-                                :src="'/storage/' + zona.imagen" 
-                                alt="Imagen de la zona" 
+                        <div
+                            v-for="zona in zonas"
+                            :key="zona.id"
+                            class="flex items-center space-x-4 border-b last:border-b-0 pb-4"
+                        >
+                            <img
+                                :src="'/storage/' + zona.imagen"
+                                alt="Imagen de la zona"
                                 class="w-32 h-20 object-cover rounded-lg"
-                            >
+                            />
 
                             <div class="flex-grow">
-                                <h3 class="text-lg font-bold">{{ zona.nombre }}</h3>
-                                <p class="text-gray-600">{{ zona.descripcion }}</p>
+                                <h3 class="text-lg font-bold">
+                                    {{ zona.nombre }}
+                                </h3>
+                                <p class="text-gray-600">
+                                    {{ zona.descripcion }}
+                                </p>
                             </div>
+                            <div
+                                class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 items-center"
+                            >
+                                <Link
+                                    :href="
+                                        route('reservas.create', {
+                                            zona: zona.id,
+                                        })
+                                    "
+                                    class="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-lg hover:bg-blue-700 text-center w-full sm:w-auto"
+                                >
+                                    Reservar
+                                </Link>
+                                <Link
+                                    :href="route('zonas.edit', zona.id)"
+                                    class="px-3 py-1 bg-yellow-500 text-white text-xs font-bold rounded-lg hover:bg-yellow-700 text-center w-full sm:w-auto"
+                                >
+                                    Editar
+                                </Link>
 
-                            <div>
-                                </div>
+                                <button
+                                    @click="eliminarZona(zona.id)"
+                                    class="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-lg hover:bg-red-700 text-center w-full sm:w-auto"
+                                >
+                                    Eliminar
+                                </button>
+                            </div>
                         </div>
 
                         <div v-if="zonas.length === 0">
-                            <p>No hay zonas creadas todavía. ¡Crea la primera!</p>
+                            <p>
+                                No hay zonas creadas todavía. ¡Crea la primera!
+                            </p>
                         </div>
                     </div>
                 </div>

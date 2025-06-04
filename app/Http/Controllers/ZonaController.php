@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Zona; // Importamos el modelo Zona
 use Inertia\Inertia; // Importamos Inertia
+use Illuminate\Support\Facades\Storage; // Para manejar el almacenamiento de archivos
 
 class ZonaController extends Controller
 {
@@ -54,5 +55,62 @@ class ZonaController extends Controller
 
         // 4. Redirigir al usuario al listado de zonas con un mensaje de éxito.
         return to_route('zonas.index')->with('message', 'Zona creada correctamente.');
+    }
+    /**
+     * Muestra el formulario para editar una zona existente.
+     */
+    public function edit(Zona $zona) // Route Model Binding
+    {
+        return Inertia::render('Zonas/Edit', [
+            'zona' => $zona,
+        ]);
+    }
+
+    /**
+     * Actualiza una zona existente en la base de datos.
+     */
+    public function update(Request $request, Zona $zona)
+    {
+        // 1. Validar los datos que vienen del formulario
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'required|string',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Opcional, pero debe ser imagen
+        ]);
+        // Actualizamos solo los campos de texto primero
+        $zona->nombre = $validated['nombre'];
+        $zona->descripcion = $validated['descripcion'];
+
+        if ($request->hasFile('imagen')) {
+            // Borrar la imagen antigua si existe
+            if ($zona->imagen) {
+                Storage::disk('public')->delete($zona->imagen);
+            }
+            // Subir y guardar la nueva imagen
+            $zona->imagen = $request->file('imagen')->store('zonas', 'public');
+        }
+        // Si no se envía un nuevo archivo ($request->hasFile('imagen') es falso),
+        // NO tocamos $zona->imagen, por lo que conservará su valor anterior.
+
+        $zona->save(); // Guardamos los cambios
+
+        // 4. Redirigir al usuario al listado de zonas con un mensaje de éxito.
+        return to_route('zonas.index')->with('message', 'Zona actualizada correctamente.');
+    }
+    /**
+     * Elimina una zona de la base de datos.
+     */
+    public function destroy(Zona $zona)
+    {
+        // 1. Borrar la imagen asociada del almacenamiento si existe
+        if ($zona->imagen) {
+            Storage::disk('public')->delete($zona->imagen); // Descomentar y asegurar que está
+        }
+
+        // 2. Eliminar la zona de la base de datos
+        $zona->delete();
+
+        // 3. Redirigir al usuario al listado de zonas con un mensaje de éxito.
+        return to_route('zonas.index')->with('message', 'Zona eliminada correctamente.');
     }
 }

@@ -42,7 +42,9 @@ Route::get('/zonas', [ZonaController::class, 'index'])
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/zonas/create', [ZonaController::class, 'create'])->name('zonas.create');
     Route::post('/zonas', [ZonaController::class, 'store'])->name('zonas.store');
-    // Aquí irán las futuras rutas de editar y borrar zonas (ej: zonas.edit, zonas.update, zonas.destroy)
+    Route::get('/zonas/{zona}', [ZonaController::class, 'edit'])->name('zonas.edit');
+    Route::put('/zonas/{zona}', [ZonaController::class, 'update'])->name('zonas.update');
+    Route::delete('/zonas/{zona}', [ZonaController::class, 'destroy'])->name('zonas.destroy');
 });
 
 
