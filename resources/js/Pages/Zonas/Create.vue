@@ -55,7 +55,7 @@ const submit = () => {
                             </progress>
 
                             <div class="flex items-center justify-end mt-4">
-                                <button type="submit" :disabled="form.processing" class="px-4 py-2 bg-indigo-600  font-semibold rounded-lg shadow-md hover:bg-indigo-700 disabled:opacity-50">
+                                <button type="submit" :disabled="form.processing" class="px-4 py-2 bg-blue-500   text-white font-semibold rounded-lg shadow-md hover:bg-blue-700">
                                     Guardar Zona
                                 </button>
                             </div>

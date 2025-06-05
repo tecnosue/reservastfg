@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ZonaController;
 use App\Http\Controllers\ReservaController;
+use App\Http\Controllers\ReglaReservaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +57,9 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::delete('/zonas/{zona}', [ZonaController::class, 'destroy'])->name('zonas.destroy');
     Route::get('/usuarios/pendientes', [DashboardController::class, 'usuariosPendientes'])->name('usuarios.pendientes');
     Route::put('/usuarios/{user}/activar', [DashboardController::class, 'activar'])->name('usuarios.activar');
+    Route::get('/reglas-reserva', [ReglaReservaController::class, 'edit'])->name('reglas.edit');
+    Route::put('/reglas-reserva', [ReglaReservaController::class, 'update'])->name('reglas.update');
+
 
 });
 

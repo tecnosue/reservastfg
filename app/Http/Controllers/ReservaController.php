@@ -86,18 +86,18 @@ class ReservaController extends Controller
     */
     public function destroy(Reserva $reserva)
     {
-        // 1. COMPROBACIÓN DE SEGURIDAD (MUY IMPORTANTE)
+        // COMPROBACIÓN DE SEGURIDAD (MUY IMPORTANTE)
         // Nos aseguramos de que el usuario que intenta cancelar la reserva
         // es el mismo que la creó.
         if (Auth::id() !== $reserva->user_id) {
             abort(403, 'Acción no autorizada.');
         }
 
-        // 2. ACTUALIZAR EL ESTADO
+        // ACTUALIZAR EL ESTADO
         // Cambiamos el estado de la reserva a 'cancelada'.
         $reserva->update(['estado' => 'cancelada']);
 
-        // 3. REDIRECCIÓN CON ÉXITO
+        // REDIRECCIÓN CON ÉXITO
         // Devolvemos al usuario a la lista de sus reservas con un mensaje.
         return to_route('reservas.index')->with('message', 'La reserva ha sido cancelada.');
     }
