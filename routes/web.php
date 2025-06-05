@@ -54,6 +54,8 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/zonas/{zona}', [ZonaController::class, 'edit'])->name('zonas.edit');
     Route::put('/zonas/{zona}', [ZonaController::class, 'update'])->name('zonas.update');
     Route::delete('/zonas/{zona}', [ZonaController::class, 'destroy'])->name('zonas.destroy');
+    Route::get('/usuarios/pendientes', [DashboardController::class, 'usuariosPendientes'])->name('usuarios.pendientes');
+    Route::put('/usuarios/{user}/activar', [DashboardController::class, 'activar'])->name('usuarios.activar');
 
 });
 

@@ -29,7 +29,7 @@ class ReservaController extends Controller
      */
     public function store(Request $request)
     {
-        // 4. VALIDACIÓN DE DATOS
+        // VALIDACIÓN DE DATOS
         // Nos aseguramos de que los datos que llegan son los que esperamos.
         $request->validate([
             'zona_id' => 'required|exists:zonas,id',
@@ -37,7 +37,7 @@ class ReservaController extends Controller
             'hora_inicio' => 'required',
         ]);
 
-        // 5. COMPROBACIÓN DE DOBLE RESERVA
+        // COMPROBACIÓN DE DOBLE RESERVA
         // Verificamos si alguien ha reservado este hueco mientras lo elegíamos.
         $reservaExistente = Reserva::where('zona_id', $request->zona_id)
                                     ->where('fecha', $request->fecha)
@@ -49,7 +49,7 @@ class ReservaController extends Controller
             return Redirect::back()->withErrors(['hora_inicio' => 'Este tramo horario ya no está disponible. Por favor, selecciona otro.']);
         }
 
-        // 6. CREACIÓN DE LA RESERVA
+        // CREACIÓN DE LA RESERVA
         // Si todo es correcto, creamos la reserva en la base de datos.
         Reserva::create([
             'user_id' => Auth::id(), // El ID del usuario que está haciendo la reserva
@@ -61,7 +61,7 @@ class ReservaController extends Controller
             'estado' => 'activa', // Definimos el estado inicial de la reserva
         ]);
 
-        // 7. REDIRECCIÓN CON ÉXITO
+        // REDIRECCIÓN CON ÉXITO
         // Redirigimos al usuario a su panel principal con un mensaje de éxito.
         return to_route('reservas.index')->with('message', '¡Tu reserva ha sido confirmada con éxito!');
     }

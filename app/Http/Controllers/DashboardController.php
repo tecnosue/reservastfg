@@ -31,13 +31,22 @@ class DashboardController extends Controller
         }
     }
 
-    /**
-     * Activa un usuario específico (nueva funcionalidad)
-     */
-    public function activarUsuario(User $user)
+    public function usuariosPendientes()
     {
-        $user->update(['activo' => true]);
+        $usuarios = User::where('activo', false)->get();
 
-        return to_route('dashboard')->with('message', 'Usuario activado correctamente.');
+        return Inertia::render('Usuarios/Pendientes', [
+            'usuarios' => $usuarios
+        ]);
     }
+
+    public function activar($id)
+    {
+        $usuario = User::findOrFail($id);
+        $usuario->activo = true;
+        $usuario->save();
+    
+        return redirect()->back()->with('message', 'Usuario activado correctamente.');
+    }
+
 }

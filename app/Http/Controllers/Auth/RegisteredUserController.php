@@ -46,6 +46,13 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        // Verificamos si el usuario está activo
+        // Si no está activo, lo deslogueamos y redirigimos a la página de PendienteActivacion
+        if (!$user->activo) {
+            Auth::logout();
+            return redirect()->route('pendiente');
+        }
+
         return redirect(route('dashboard', absolute: false));
     }
 }
