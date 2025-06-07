@@ -35,7 +35,7 @@ const showingNavigationDropdown = ref(false);
                                     :href="route('dashboard')"
                                     :active="route().current('dashboard')"
                                 >
-                                    Dashboard
+                                    Panel de Control
                                 </NavLink>
 
                                 <NavLink
@@ -149,7 +149,7 @@ const showingNavigationDropdown = ref(false);
                             :href="route('dashboard')"
                             :active="route().current('dashboard')"
                         >
-                            Dashboard
+                            Panel de Control
                         </ResponsiveNavLink>
                     </div>
 

@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
+
 const props = defineProps({
     usuarios: Array,
     grupos: Array,
