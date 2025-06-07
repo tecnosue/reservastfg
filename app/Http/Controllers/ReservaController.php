@@ -14,13 +14,17 @@ class ReservaController extends Controller
 {
     public function create(Zona $zona)
     {
+        $zona->load('disponibilidades');
+
         $reservas = Reserva::where('zona_id', $zona->id)
-                           ->where('fecha', '>=', now()->toDateString())
-                           ->get(['fecha', 'hora_inicio']);
+            ->where('fecha', '>=', now()->toDateString())
+            ->where('estado', 'activa') // Solo reservas activas
+            ->get(['fecha', 'hora_inicio']);
 
         return Inertia::render('Reservas/Create', [
             'zona' => $zona,
             'reservas' => $reservas,
+            'disponibilidades' => $zona->disponibilidades,
         ]);
     }
 
@@ -40,13 +44,14 @@ class ReservaController extends Controller
         // COMPROBACIÓN DE DOBLE RESERVA
         // Verificamos si alguien ha reservado este hueco mientras lo elegíamos.
         $reservaExistente = Reserva::where('zona_id', $request->zona_id)
-                                    ->where('fecha', $request->fecha)
-                                    ->where('hora_inicio', $request->hora_inicio)
-                                    ->exists(); // ->exists() devuelve true si encuentra algo
+            ->where('fecha', $request->fecha)
+            ->where('hora_inicio', $request->hora_inicio)
+            ->where('estado', 'activa') //Solo bloqueamos si la reserva está activa
+            ->exists(); // ->exists() devuelve true si encuentra algo
 
         if ($reservaExistente) {
             // Si el hueco ya está cogido, volvemos atrás con un error específico.
-            return Redirect::back()->withErrors(['hora_inicio' => 'Este tramo horario ya no está disponible. Por favor, selecciona otro.']);
+            return Redirect::back()->with('message', 'Este tramo horario ya no está disponible. Por favor, selecciona otro.');
         }
 
         // CREACIÓN DE LA RESERVA
@@ -67,14 +72,14 @@ class ReservaController extends Controller
     }
 
     /**
-    * Muestra un listado de las reservas del usuario autenticado.
-    */
+     * Muestra un listado de las reservas del usuario autenticado.
+     */
     public function index()
     {
         $reservas = Reserva::where('user_id', Auth::id()) // Busca solo las del usuario logueado
-                            ->with('zona')                 // Carga también la información de la zona asociada
-                            ->latest()                     // Ordena de la más nueva a la más antigua
-                            ->paginate(10);                // Pagina los resultados de 10 en 10
+            ->with('zona')                 // Carga también la información de la zona asociada
+            ->latest()                     // Ordena de la más nueva a la más antigua
+            ->paginate(10);                // Pagina los resultados de 10 en 10
 
         return Inertia::render('Reservas/Index', [
             'reservas' => $reservas,
@@ -82,8 +87,8 @@ class ReservaController extends Controller
     }
 
     /**
-    * Cancela una reserva existente.
-    */
+     * Cancela una reserva existente.
+     */
     public function destroy(Reserva $reserva)
     {
         // COMPROBACIÓN DE SEGURIDAD (MUY IMPORTANTE)

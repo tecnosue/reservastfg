@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Zona; // Importamos el modelo Zona
 use Inertia\Inertia; // Importamos Inertia
 use Illuminate\Support\Facades\Storage; // Para manejar el almacenamiento de archivos
+use App\Models\ZonaDisponibilidad; // Importamos el modelo ZonaDisponibilidad
 
 class ZonaController extends Controller
 {
@@ -40,18 +41,36 @@ class ZonaController extends Controller
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string',
             'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // requerido, debe ser imagen, tipos permitidos, tamaño máx 2MB
+            'disponibilidad' => 'required|string', // JSON string con la disponibilidad
+
         ]);
+        // Validar que se pueda decodificar
+        $disponibilidad = json_decode($validated['disponibilidad'], true);
+        if (!is_array($disponibilidad)) {
+            return back()->withErrors(['disponibilidad' => 'El formato de disponibilidad no es válido.']);
+        }
 
         // 2. Gestionar la subida de la imagen
         $imagePath = $request->file('imagen')->store('zonas', 'public');
         // Esto guarda la imagen en 'storage/app/public/zonas' y nos da la ruta.
 
         // 3. Crear la nueva zona en la base de datos
-        Zona::create([
+        $zona = Zona::create([
             'nombre' => $validated['nombre'],
             'descripcion' => $validated['descripcion'],
             'imagen' => $imagePath, // Guardamos la ruta de la imagen
         ]);
+        // 3.1 Crear las disponibilidades asociadas a la zona
+        $disponibilidad = json_decode($validated['disponibilidad'], true);
+
+        foreach ($disponibilidad as $slot) {
+            ZonaDisponibilidad::create([
+                'zona_id' => $zona->id,
+                'dia_semana' => $slot['dia_semana'],
+                'hora_inicio' => $slot['hora_inicio'],
+                'hora_fin' => $slot['hora_fin'],
+            ]);
+        }
 
         // 4. Redirigir al usuario al listado de zonas con un mensaje de éxito.
         return to_route('zonas.index')->with('message', 'Zona creada correctamente.');
@@ -61,6 +80,8 @@ class ZonaController extends Controller
      */
     public function edit(Zona $zona) // Route Model Binding
     {
+        // Cargar las disponibilidades asociadas a la zona
+        $zona->load('disponibilidades');
         return Inertia::render('Zonas/Edit', [
             'zona' => $zona,
         ]);
@@ -91,6 +112,20 @@ class ZonaController extends Controller
         }
         // Si no se envía un nuevo archivo ($request->hasFile('imagen') es falso),
         // NO tocamos $zona->imagen, por lo que conservará su valor anterior.
+
+        
+        if ($request->has('disponibilidades')) {
+            $zona->disponibilidades()->delete();
+
+            foreach ($request->input('disponibilidades') as $slot) {
+                ZonaDisponibilidad::create([
+                    'zona_id' => $zona->id,
+                    'dia_semana' => $slot['dia_semana'],
+                    'hora_inicio' => $slot['hora_inicio'],
+                    'hora_fin' => $slot['hora_fin'],
+                ]);
+            }
+        }
 
         $zona->save(); // Guardamos los cambios
 

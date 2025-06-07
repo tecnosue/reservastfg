@@ -3,6 +3,8 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link } from "@inertiajs/vue3";
 import { router } from "@inertiajs/vue3"; // Importa el router de Inertia
 
+
+// Función para eliminar una zona
 function eliminarZona(zonaId) {
     if (window.confirm("¿Seguro que quieres eliminar esta zona?")) {
         router.delete(route("zonas.destroy", zonaId));
@@ -24,27 +26,21 @@ defineProps({
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                     Gestión de Zonas Comunes
                 </h2>
-                <Link
-                    :href="route('zonas.create')"
-                    class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700"
-                >
-                    + Crear Zona
-                </Link>
+                
             </div>
+        </template>
+        <template #action>
+            <Link
+                href="/zonas/create"
+                class="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700"
+            >
+                + Crear Zona
+            </Link>
         </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <!--comprueba si el objeto $page.props.flash existe y si tiene la propiedad message -->
-                <div
-                    v-if="$page.props.flash && $page.props.flash.message"
-                    class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4"
-                    role="alert"
-                >
-                    <span class="block sm:inline">{{
-                        $page.props.flash.message
-                    }}</span>
-                </div>
 
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900 space-y-4">

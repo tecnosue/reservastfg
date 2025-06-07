@@ -19,4 +19,8 @@ class Zona extends Model
     {
         return $this->hasMany(Reserva::class);
     }
+    public function disponibilidades()
+    {
+        return $this->hasMany(ZonaDisponibilidad::class);
+    }
 }

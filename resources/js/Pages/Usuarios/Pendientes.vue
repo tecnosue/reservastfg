@@ -17,7 +17,7 @@ const activarUsuario = (id) => {
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Usuarios Pendientes de Activación
-            </h2>
+            </h2>        
         </template>
         <div class="p-6">
             <p class="mb-4">

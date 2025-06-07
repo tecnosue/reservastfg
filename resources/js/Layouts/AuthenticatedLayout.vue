@@ -183,7 +183,26 @@ const showingNavigationDropdown = ref(false);
             <!-- Page Heading -->
             <header class="bg-white shadow" v-if="$slots.header">
                 <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <slot name="header" />
+                    <div class="flex justify-between items-center mb-4">
+                        <slot name="header" />
+                        <slot name="action" />
+                    </div>
+                    <div
+                        v-if="$page.props.flash?.message"
+                        :class="[
+                            'p-2 rounded mb-4 mx-4',
+                            $page.props.flash.message
+                                .toLowerCase()
+                                .includes('no disponible') ||
+                            $page.props.flash.message
+                                .toLowerCase()
+                                .includes('error')
+                                ? 'bg-red-100 text-red-700'
+                                : 'bg-green-100 text-green-700',
+                        ]"
+                    >
+                        {{ $page.props.flash.message }}
+                    </div>
                 </div>
             </header>
 

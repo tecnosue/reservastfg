@@ -27,7 +27,7 @@ const guardarCambios = () => {
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Configurar Reglas de Reserva
             </h2>
-
+           
         </template>
 
         <div class="p-6 max-w-2xl mx-auto">
