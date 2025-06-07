@@ -13,14 +13,13 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            AdminUserSeeder::class, // Asegúrate de que esta línea esté si tienes este seeder
+            AdminUserSeeder::class, 
+            GrupoSeeder::class,
+            ZonaSeeder::class,
+            ZonaDisponibilidadSeeder::class,
+
             // Aquí podrías llamar a otros seeders si los tuvieras
         ]);
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        
     }
 }

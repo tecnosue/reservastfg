@@ -7,14 +7,22 @@ use App\Models\Zona; // Importamos el modelo Zona
 use Inertia\Inertia; // Importamos Inertia
 use Illuminate\Support\Facades\Storage; // Para manejar el almacenamiento de archivos
 use App\Models\ZonaDisponibilidad; // Importamos el modelo ZonaDisponibilidad
+use Illuminate\Support\Facades\Auth; // Para obtener el usuario autenticado
 
 class ZonaController extends Controller
 {
     // Método que mostrará el listado de zonas
     public function index()
     {
-        //Pedimos al modelo todas las zonas de la BBDD y las guardamos en una variable
-        $zonas = Zona::all();
+        // Verificamos si el usuario es administrador o pertenece a un grupo específico
+        // Si es administrador, obtenemos todas las zonas
+        // Si no, obtenemos solo las zonas del grupo al que pertenece el usuario autenticado
+        if (Auth::user()->es_admin) {
+            $zonas = Zona::all();
+        } else {
+            $zonas = Zona::where('grupo_id', Auth::user()->grupo_id)->get();
+        }
+
 
         //Devolvemos la vista de Vue (Zonas/Index.vue) y le pasamos los datos
         return Inertia::render('Zonas/Index', [
@@ -113,7 +121,7 @@ class ZonaController extends Controller
         // Si no se envía un nuevo archivo ($request->hasFile('imagen') es falso),
         // NO tocamos $zona->imagen, por lo que conservará su valor anterior.
 
-        
+
         if ($request->has('disponibilidades')) {
             $zona->disponibilidades()->delete();
 

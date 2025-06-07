@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Zona;
 use App\Models\User;
 use Inertia\Inertia;
+use App\Models\Grupo;
 
 class DashboardController extends Controller
 {
@@ -23,10 +24,12 @@ class DashboardController extends Controller
                 'usuariosPendientes' => User::where('activo', false)->get(), // usuarios pendientes
 
             ]);
-           
         } else {
             return Inertia::render('DashboardUsuario', [
-                'zonas' => Zona::all(),
+                'zonas' => $user->grupo ? $user->grupo->zonas : Zona::all(), // Zonas del grupo del usuario
+                'usuario' => $user, // Información del usuario autenticado
+                'grupo' => $user->grupo, // Información del grupo al que pertenece el usuario
+            
             ]);
         }
     }
@@ -34,19 +37,24 @@ class DashboardController extends Controller
     public function usuariosPendientes()
     {
         $usuarios = User::where('activo', false)->get();
+        $grupos = Grupo::all();
 
         return Inertia::render('Usuarios/Pendientes', [
-            'usuarios' => $usuarios
+            'usuarios' => $usuarios,
+            'grupos' => $grupos, // Pasamos los grupos para que se puedan asignar
         ]);
     }
 
-    public function activar($id)
+    public function activar(Request $request, User $user)
     {
-        $usuario = User::findOrFail($id);
-        $usuario->activo = true;
-        $usuario->save();
-    
+        $request->validate([
+            'grupo_id' => 'required|exists:grupos,id',
+        ]);
+
+        $user->activo = true;
+        $user->grupo_id = $request->grupo_id;
+        $user->save();
+
         return redirect()->back()->with('message', 'Usuario activado correctamente.');
     }
-
 }

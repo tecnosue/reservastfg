@@ -16,9 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            // $table->string('rol')->default('usuario');
             $table->enum('rol', ['usuario', 'administrador'])->default('usuario');
-
+            $table->foreignId('grupo_id')->nullable()->constrained('grupos')->nullOnDelete();
             $table->string('password');
             $table->boolean('activo')->default(false);
             $table->rememberToken();

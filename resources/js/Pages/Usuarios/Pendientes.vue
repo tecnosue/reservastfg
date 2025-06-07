@@ -1,14 +1,21 @@
 <script setup>
 import { Head, Link, router } from "@inertiajs/vue3";
+import { ref } from "vue";
+import { useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
 const props = defineProps({
     usuarios: Array,
+    grupos: Array,
 });
+const forms = props.usuarios.reduce((acc, user) => {
+    acc[user.id] = useForm({
+        grupo_id: "",
+    });
+    return acc;
+}, {});
 
-const activarUsuario = (id) => {
-    router.put(`/usuarios/${id}/activar`);
-};
+
 </script>
 
 <template>
@@ -17,33 +24,57 @@ const activarUsuario = (id) => {
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Usuarios Pendientes de Activación
-            </h2>        
+            </h2>
         </template>
-        <div class="p-6">
-            <p class="mb-4">
-                Aquí puedes activar las cuentas de los usuarios que están pendientes
-                de activación. Haz clic en "Activar" para permitirles acceder al sistema.
-            </p>
+        <div>
+            <div
+                v-if="usuarios.length === 0"
+                class="p-4 text-center text-gray-500"
+            >
+                No hay usuarios pendientes de activación.
+            </div>
 
-            <table class="table-auto w-full">
+            <table v-else class="table-auto w-full mt-4">
                 <thead>
-                    <tr class="bg-gray-100">
-                        <th class="px-4 py-2">Nombre</th>
-                        <th class="px-4 py-2">Email</th>
-                        <th class="px-4 py-2">Acción</th>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Grupo</th>
+                        <th>Acción</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="usuario in usuarios" :key="usuario.id">
-                        <td class="border px-4 py-2">{{ usuario.name }}</td>
-                        <td class="border px-4 py-2">{{ usuario.email }}</td>
-                        <td class="border px-4 py-2">
-                            <button
-                                class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-                                @click="activarUsuario(usuario.id)"
+                        <td>{{ usuario.name }}</td>
+                        <td>{{ usuario.email }}</td>
+                        <td>
+                            <select
+                                v-model="forms[usuario.id].grupo_id"
+                                class="border rounded"
                             >
-                                Activar
-                            </button>
+                                <option
+                                    v-for="grupo in grupos"
+                                    :value="grupo.id"
+                                    :key="grupo.id"
+                                >
+                                    {{ grupo.nombre }}
+                                </option>
+                            </select>
+                            <div
+                            v-if="forms[usuario.id].errors.grupo_id"
+                            class="text-red-600 text-sm mt-1"
+                        >
+                            {{ forms[usuario.id].errors.grupo_id }}
+                        </div>
+                        </td>
+                        <td>
+                            <button
+                            @click="forms[usuario.id].put(route('usuarios.activar', usuario.id))"
+                            :disabled="!forms[usuario.id].grupo_id"
+                            class="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700 disabled:opacity-50"
+                        >
+                            Activar
+                        </button>
                         </td>
                     </tr>
                 </tbody>

@@ -50,4 +50,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Reserva::class);
     }
+    public function grupo() {
+     return $this->belongsTo(Grupo::class);
+    }
+
 }
