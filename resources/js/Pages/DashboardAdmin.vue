@@ -1,10 +1,15 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link  } from "@inertiajs/vue3";
+import PendingUsersTable from '@/Components/Admin/PendingUsersTable.vue';
+import { defineProps } from 'vue'; // Si no está ya importado
+
 
 // Definimos las 'props' que este componente recibe desde el controlador
 defineProps({
     zonas: Array,
+    usuariosPendientes: Array,
+    grupos: Array,
 });
 </script>
 
@@ -49,10 +54,37 @@ defineProps({
                             >
                                 Ver Usuarios Pendientes
                             </Link>
+                             <Link
+                                :href="route('grupos.index')"
+                                class="px-4 py-2 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700"
+                            >
+                                Gestionar Grupos
+                            </Link>
+                        </div>
+                         </div>
+                </div>
+            </div>
+        </div>
+        <div class="py-12">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900">
+
+                        <!-- Sección de usuarios pendientes -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-bold mb-4">Usuarios Pendientes de Activación</h3>
+                            <PendingUsersTable 
+                                v-if="usuariosPendientes.length > 0"
+                                :usuarios="usuariosPendientes"
+                                :grupos="grupos"
+                            />
+                            <p v-else class="text-gray-500">No hay usuarios pendientes de activación</p>
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
+
     </AuthenticatedLayout>
 </template>

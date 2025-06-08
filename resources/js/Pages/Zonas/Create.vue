@@ -8,9 +8,9 @@ import { Head, useForm, usePage } from "@inertiajs/vue3";
 
 import { router } from '@inertiajs/vue3';
 // 'router' es el objeto de enrutamiento de Inertia que nos permite enviar solicitudes al backend.
-const page = usePage();
-
-const flashMessage = page.props.flash?.message;
+const props = defineProps({
+    grupos: Array, // <--- Asegúrate de que esta línea esté presente
+});
 
 const diasSemana = [
     "lunes",
@@ -28,6 +28,8 @@ const form = useForm({
     descripcion: "",
     imagen: null,
     disponibilidad: [],
+    grupo_id: "", // <--- AÑADE EL CAMPO grupo_id AL FORMULARIO
+
 });
 const agregarDisponibilidad = () => {
     form.disponibilidad.push({ dia_semana: "", hora_inicio: "", hora_fin: "" });
@@ -45,9 +47,12 @@ const submit = () => {
 
     // IMPORTANTE: serializar la disponibilidad como JSON
     formData.append("disponibilidad", JSON.stringify(form.disponibilidad));
+    formData.append("grupo_id", form.grupo_id); // <--- AÑADE EL grupo_id AL FormData
+
 
     router.post(route("zonas.store"), formData, {
         forceFormData: true,
+       
     });
 };
 
@@ -135,6 +140,29 @@ const submit = () => {
                                     class="text-sm text-red-600 mt-1"
                                 >
                                     {{ form.errors.imagen }}
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label for="grupo_id" class="block text-sm font-medium text-gray-700">Grupo</label>
+                                <select
+                                    id="grupo_id"
+                                    v-model="form.grupo_id"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                                >
+                                    <option value="" disabled>Selecciona un grupo</option>
+                                    <option
+                                        v-for="grupo in grupos"
+                                        :key="grupo.id"
+                                        :value="grupo.id"
+                                    >
+                                        {{ grupo.nombre }}
+                                    </option>
+                                </select>
+                                <div
+                                    v-if="form.errors.grupo_id"
+                                    class="text-sm text-red-600 mt-1"
+                                >
+                                    {{ form.errors.grupo_id }}
                                 </div>
                             </div>
 

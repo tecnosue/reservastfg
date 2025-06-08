@@ -24,7 +24,7 @@ defineProps({
 
 <template>
     <Head title="Bienvenido a Reservas Comunes" /> <div
-        class="relative flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-sky-100 via-indigo-200 to-purple-200 selection:bg-red-500 selection:text-white"
+        class="relative flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-sky-100 via-blue-200 to-purple-200 selection:bg-red-500 selection:text-white"
     >
         <div class="relative w-full max-w-4xl px-6 py-10 text-center">
             <div class="flex justify-center mb-8">
@@ -53,7 +53,7 @@ defineProps({
                 <Link
                     v-if="$page.props.auth.user"
                     :href="route('dashboard')"
-                    class="rounded-lg bg-indigo-600 px-6 py-3 text-lg font-semibold text-white shadow-lg transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="rounded-lg bg-blue-600 px-6 py-3 text-lg font-semibold text-white shadow-lg transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                     Ir al Panel
                 </Link>

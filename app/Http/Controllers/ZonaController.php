@@ -8,16 +8,20 @@ use Inertia\Inertia; // Importamos Inertia
 use Illuminate\Support\Facades\Storage; // Para manejar el almacenamiento de archivos
 use App\Models\ZonaDisponibilidad; // Importamos el modelo ZonaDisponibilidad
 use Illuminate\Support\Facades\Auth; // Para obtener el usuario autenticado
+use App\Models\Grupo; 
 
 class ZonaController extends Controller
 {
     // Método que mostrará el listado de zonas
     public function index()
     {
+        
         // Verificamos si el usuario es administrador o pertenece a un grupo específico
         // Si es administrador, obtenemos todas las zonas
         // Si no, obtenemos solo las zonas del grupo al que pertenece el usuario autenticado
-        if (Auth::user()->es_admin) {
+
+        
+        if (Auth::user()->rol === 'administrador') {
             $zonas = Zona::all();
         } else {
             $zonas = Zona::where('grupo_id', Auth::user()->grupo_id)->get();
@@ -26,7 +30,7 @@ class ZonaController extends Controller
 
         //Devolvemos la vista de Vue (Zonas/Index.vue) y le pasamos los datos
         return Inertia::render('Zonas/Index', [
-            'zonas' => Zona::all(),
+            'zonas' => $zonas,
         ]);
     }
 
@@ -35,8 +39,11 @@ class ZonaController extends Controller
      */
     public function create()
     {
-        // Este método muestra la página con el formulario.
-        return Inertia::render('Zonas/Create');
+        $grupos = Grupo::all(['id', 'nombre']); // <--- OBTENEMOS TODOS LOS GRUPOS
+
+        return Inertia::render('Zonas/Create', [
+            'grupos' => $grupos, // <--- PASAMOS LOS GRUPOS A LA VISTA
+        ]);
     }
 
     /**
@@ -50,6 +57,7 @@ class ZonaController extends Controller
             'descripcion' => 'required|string',
             'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // requerido, debe ser imagen, tipos permitidos, tamaño máx 2MB
             'disponibilidad' => 'required|string', // JSON string con la disponibilidad
+            'grupo_id' => 'required|exists:grupos,id', 
 
         ]);
         // Validar que se pueda decodificar
@@ -67,6 +75,7 @@ class ZonaController extends Controller
             'nombre' => $validated['nombre'],
             'descripcion' => $validated['descripcion'],
             'imagen' => $imagePath, // Guardamos la ruta de la imagen
+            'grupo_id' => $validated['grupo_id'], // <--- GUARDAMOS EL grupo_id
         ]);
         // 3.1 Crear las disponibilidades asociadas a la zona
         $disponibilidad = json_decode($validated['disponibilidad'], true);
@@ -90,8 +99,11 @@ class ZonaController extends Controller
     {
         // Cargar las disponibilidades asociadas a la zona
         $zona->load('disponibilidades');
+        $grupos = Grupo::all(['id', 'nombre']); // <--- OBTENEMOS TODOS LOS GRUPOS PARA LA EDICIÓN TAMBIÉN
+
         return Inertia::render('Zonas/Edit', [
             'zona' => $zona,
+            'grupos' => $grupos, // <--- PASAMOS LOS GRUPOS A LA VISTA DE EDICIÓN
         ]);
     }
 
@@ -105,10 +117,12 @@ class ZonaController extends Controller
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Opcional, pero debe ser imagen
+            'grupo_id' => 'required|exists:grupos,id', 
         ]);
         // Actualizamos solo los campos de texto primero
         $zona->nombre = $validated['nombre'];
         $zona->descripcion = $validated['descripcion'];
+        $zona->grupo_id = $validated['grupo_id']; // <--- ACTUALIZAMOS EL grupo_id
 
         if ($request->hasFile('imagen')) {
             // Borrar la imagen antigua si existe

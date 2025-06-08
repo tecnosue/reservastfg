@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ZonaController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\ReglaReservaController;
+use App\Http\Controllers\GrupoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +60,10 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::put('/usuarios/{user}/activar', [DashboardController::class, 'activar'])->name('usuarios.activar');
     Route::get('/reglas-reserva', [ReglaReservaController::class, 'edit'])->name('reglas.edit');
     Route::put('/reglas-reserva', [ReglaReservaController::class, 'update'])->name('reglas.update');
+   // Nuevas rutas para grupos
+    Route::get('/grupos', [GrupoController::class, 'index'])->name('grupos.index');
+    Route::post('/grupos', [GrupoController::class, 'store'])->name('grupos.store');
+    Route::delete('/grupos/{grupo}', [GrupoController::class, 'destroy'])->name('grupos.destroy');
 
 
 });

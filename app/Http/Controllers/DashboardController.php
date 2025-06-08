@@ -22,7 +22,7 @@ class DashboardController extends Controller
             return Inertia::render('DashboardAdmin', [
                 'zonas' => Zona::all(),
                 'usuariosPendientes' => User::where('activo', false)->get(), // usuarios pendientes
-
+                'grupos' => Grupo::all(), // Agregar grupos
             ]);
         } else {
             return Inertia::render('DashboardUsuario', [
@@ -54,6 +54,7 @@ class DashboardController extends Controller
         $user->activo = true;
         $user->grupo_id = $request->grupo_id;
         $user->save();
+        
 
         return redirect()->back()->with('message', 'Usuario activado correctamente.');
     }

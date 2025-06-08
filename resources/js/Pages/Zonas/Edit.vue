@@ -7,6 +7,7 @@ import { ref } from "vue";
 const props = defineProps({
     zona: Object, // La zona que estamos editando
     errors: Object, // Errores de validación si los hay
+    grupos: Array, // Lista de grupos para el selector
 });
 
 // 'diasSemana' es un array con los días de la semana para el selector de disponibilidad.
@@ -28,6 +29,7 @@ const form = useForm({
     descripcion: props.zona.descripcion,
     imagen: null, // Para la nueva imagen, si se sube
     disponibilidades: props.zona.disponibilidades ?? [],
+    grupo_id: props.zona.grupo_id,
 });
 
 const currentImageUrl = ref(
@@ -171,6 +173,33 @@ const submit = () => {
                             </div>
                             <div class="mb-4">
                                 <label
+                                    for="grupo_id"
+                                    class="block text-sm font-medium text-gray-700"
+                                    >Grupo</label
+                                >
+                                <select
+                                    id="grupo_id"
+                                    v-model="form.grupo_id"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                                >
+                                    <option value="" disabled>Selecciona un grupo</option>
+                                    <option
+                                        v-for="grupo in props.grupos"
+                                        :key="grupo.id"
+                                        :value="grupo.id"
+                                    >
+                                        {{ grupo.nombre }}
+                                    </option>
+                                </select>
+                                <div
+                                    v-if="form.errors.grupo_id"
+                                    class="text-sm text-red-600 mt-1"
+                                >
+                                    {{ form.errors.grupo_id }}
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label
                                     class="block text-sm font-medium text-gray-700"
                                     >Disponibilidad</label
                                 >
@@ -241,7 +270,7 @@ const submit = () => {
                                 <button
                                     type="submit"
                                     :disabled="form.processing"
-                                    class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 disabled:opacity-50"
+                                    class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 disabled:opacity-50"
                                 >
                                     Actualizar Zona
                                 </button>
