@@ -1,16 +1,24 @@
 <script setup>
 import { Head, router } from "@inertiajs/vue3";
 
+// const logout = () => {
+//     router.post(
+//         route("logout"),
+//         {},
+//         {
+//             onFinish: () => {
+//                 router.visit("/"); // redireccionar a la página de inicio después de cerrar sesión
+//             }
+//         }
+//     );
+// };
 const logout = () => {
-    router.post(
-        route("logout"),
-        {},
-        {
-            onFinish: () => {
-                router.visit("/"); // redireccionar a la página de inicio después de cerrar sesión
-            }
+    router.post(route("logout"), {}, {
+        onFinish: () => {
+            // Forzar recarga completa de la página
+            window.location.replace('/');
         }
-    );
+    });
 };
 </script>
 
