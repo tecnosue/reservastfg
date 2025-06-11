@@ -8,6 +8,8 @@ use App\Models\Zona;
 use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Grupo;
+use App\Notifications\UsuarioActivado;
+
 
 class DashboardController extends Controller
 {
@@ -54,7 +56,9 @@ class DashboardController extends Controller
         $user->activo = true;
         $user->grupo_id = $request->grupo_id;
         $user->save();
-        
+
+        // Enviar email de activación
+        $user->notify(new UsuarioActivado());
 
         return redirect()->back()->with('message', 'Usuario activado correctamente.');
     }

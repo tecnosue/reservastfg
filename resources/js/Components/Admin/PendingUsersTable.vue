@@ -1,7 +1,9 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
-
+import PendingUsersTable from '@/Components/Admin/PendingUsersTable.vue';
+import { Head, Link  } from "@inertiajs/vue3";
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 
 const props = defineProps({
@@ -41,41 +43,46 @@ const activarUsuario = (usuarioId) => {
         <div v-if="usuarios.length === 0" class="p-4 text-center text-gray-500">
             No hay usuarios pendientes de activación.
         </div>
-        
-        <table v-else class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Nombre</th>
-                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Email</th>
-                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Grupo</th>
-                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Acción</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                <tr v-for="usuario in usuarios" :key="usuario.id">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ usuario.name }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ usuario.email }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        <select v-model="forms[usuario.id].grupo_id" class="border border-gray-300 rounded p-1">
-                            <option value="" disabled>Selecciona un grupo</option>
-                            <option v-for="grupo in grupos" :key="grupo.id" :value="grupo.id">
-                                {{ grupo.nombre }}
-                            </option>
-                        </select>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        <button
-                            @click="activarUsuario(usuario.id)"
-                            :disabled="!forms[usuario.id].grupo_id"
-                            class="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700 disabled:opacity-50"
-                        >
-                            Activar
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+
+        <div v-else class="overflow-x-auto shadow-md sm:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Nombre</th>
+                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Email</th>
+                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Grupo</th>
+                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Acción</th>
+                    </tr>
+                </thead>
+
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr v-for="usuario in usuarios" :key="usuario.id">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ usuario.name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ usuario.email }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <select v-model="forms[usuario.id].grupo_id" class="border border-gray-300 rounded p-1">
+                                <option value="" disabled>Selecciona un grupo</option>
+                                <option v-for="grupo in grupos" :key="grupo.id" :value="grupo.id">
+                                    {{ grupo.nombre }}
+                                </option>
+                            </select>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <button
+                                @click="activarUsuario(usuario.id)"
+                                :disabled="!forms[usuario.id].grupo_id"
+                                class="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700 disabled:opacity-50"
+                            >
+                                Activar
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
     </div>
+   
 </template>
 <style scoped>
 .fixed {

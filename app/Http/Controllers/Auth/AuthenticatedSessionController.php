@@ -32,13 +32,17 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        $request->session()->regenerate();
+       
+        
+        session()->regenerate(); // 👈 Usar helper global
+
         $user = Auth::user();
 
         if (!$user->activo) {
-            Auth::logout(); // Desloguear al usuario si no está activo
+            Auth::logout();
             return redirect()->route('pendiente');
         }
+
 
 
 
@@ -55,7 +59,12 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
+        $request->session()->flush();//limpia la sesión
 
-        return redirect('/');
+        return redirect('/')->withHeaders([
+        'Cache-Control' => 'no-cache, no-store, must-revalidate',
+        'Pragma' => 'no-cache',
+        'Expires' => '0'
+        ]);
     }
 }

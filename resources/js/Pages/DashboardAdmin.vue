@@ -24,7 +24,7 @@ defineProps({
         </template>
 
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
                         <h3 class="text-lg font-bold">
@@ -35,7 +35,14 @@ defineProps({
                         </p>
 
                         <!-- botones -->
-                        <div class="flex space-x-4">
+                        <div class="
+                                flex
+                                flex-col        /* Por defecto (móvil): los elementos se apilan verticalmente */
+                                sm:flex-row     /* A partir de 'sm' (640px): los elementos se disponen en fila */
+                                space-y-4       /* Margen vertical entre elementos para móvil */
+                                sm:space-y-0    /* Elimina el margen vertical en pantallas 'sm' y superiores */
+                                sm:space-x-4    /* Margen horizontal entre elementos para pantallas 'sm' y superiores */
+                                ">
                             <Link
                                 :href="route('zonas.index')"
                                 class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700"

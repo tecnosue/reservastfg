@@ -22,7 +22,7 @@ defineProps({
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex justify-between items-center">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                     Gestión de Zonas Comunes
                 </h2>
@@ -32,29 +32,29 @@ defineProps({
         <template #action>
             <Link
                 href="/zonas/create"
-                class="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700"
+                class="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 w-full sm:w-auto text-center"
             >
                 + Crear Zona
             </Link>
         </template>
 
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900 space-y-4">
                         <div
                             v-for="zona in zonas"
                             :key="zona.id"
-                            class="flex items-center space-x-4 border-b last:border-b-0 pb-4"
+                            class="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 border-b last:border-b-0 pb-4 pt-4 first:pt-0"
                         >
                             <img
                                 :src="'/storage/' + zona.imagen"
                                 alt="Imagen de la zona"
-                                class="w-32 h-20 object-cover rounded-lg"
+                                class="w-full h-40 sm:w-32 sm:h-20 object-cover rounded-lg"
                             />
 
-                            <div class="flex-grow">
+                            <div class="flex-grow w-full sm:w-auto">
                                 <h3 class="text-lg font-bold">
                                     {{ zona.nombre }}
                                 </h3>
@@ -63,7 +63,7 @@ defineProps({
                                 </p>
                             </div>
                             <div
-                                class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 items-center"
+                            class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 items-center w-full sm:w-auto"
                             >
                                 <Link
                                     :href="
