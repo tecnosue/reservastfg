@@ -11,6 +11,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('zona_id')->constrained()->onDelete('cascade');
+            $table->foreignId('grupo_id')->constrained()->onDelete('cascade'); 
+
             $table->date('fecha');
             $table->time('hora_inicio');
             $table->time('hora_fin');

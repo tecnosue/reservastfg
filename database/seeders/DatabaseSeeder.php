@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             GrupoSeeder::class,
             ZonaSeeder::class,
             ZonaDisponibilidadSeeder::class,
+            ReglaReservaSeeder::class, 
 
             // Aquí podrías llamar a otros seeders si los tuvieras
         ]);

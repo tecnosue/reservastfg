@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('reglas_reserva', function (Blueprint $table) {
             $table->id();
+
+            // Clave foránea hacia grupos
+            $table->unsignedBigInteger('grupo_id');
+            $table->foreign('grupo_id')->references('id')->on('grupos')->onDelete('cascade');
+
+
             $table->unsignedInteger('max_por_dia')->default(0);
             $table->unsignedInteger('max_por_semana')->default(0);
             $table->unsignedInteger('max_por_mes')->default(0);

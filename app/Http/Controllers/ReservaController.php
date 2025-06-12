@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Zona;
+use App\Models\Grupo;
+
 use App\Models\Reserva;
+use App\Models\ReglaReserva;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth; // <-- 1. Importar Auth
 use Carbon\Carbon;                   // <-- 2. Importar Carbon para manejar fechas/horas
@@ -12,6 +15,12 @@ use Illuminate\Support\Facades\Redirect; // <-- 3. Importar Redirect
 
 class ReservaController extends Controller
 {
+    /**
+     * Muestra el formulario para crear una nueva reserva.
+     *
+     * @param Zona $zona
+     * @return \Inertia\Response
+     */
     public function create(Zona $zona)
     {
         $zona->load('disponibilidades');
@@ -20,11 +29,15 @@ class ReservaController extends Controller
             ->where('fecha', '>=', now()->toDateString())
             ->where('estado', 'activa') // Solo reservas activas
             ->get(['fecha', 'hora_inicio']);
+        $user = Auth::user();
 
+        // 👇 Solo pasamos los grupos si el usuario es admin
+        $grupos = $user->rol === 'administrador' ? \App\Models\Grupo::all() : [];
         return Inertia::render('Reservas/Create', [
             'zona' => $zona,
             'reservas' => $reservas,
             'disponibilidades' => $zona->disponibilidades,
+            'grupos' => $grupos,
         ]);
     }
 
@@ -33,12 +46,15 @@ class ReservaController extends Controller
      */
     public function store(Request $request)
     {
-        // VALIDACIÓN DE DATOS
-        // Nos aseguramos de que los datos que llegan son los que esperamos.
+        $user = Auth::user();
+
+        // 1. VALIDACIÓN DE DATOS BÁSICOS
         $request->validate([
             'zona_id' => 'required|exists:zonas,id',
             'fecha' => 'required|date',
             'hora_inicio' => 'required',
+            // El grupo solo es obligatorio si eres administrador
+            //'grupo_id' => $user->rol === 'administrador' ? 'required|exists:grupos,id' : '',
         ]);
 
         // COMPROBACIÓN DE DOBLE RESERVA
@@ -54,12 +70,83 @@ class ReservaController extends Controller
             return Redirect::back()->with('message', 'Este tramo horario ya no está disponible. Por favor, selecciona otro.');
         }
 
+        // 👇 Aquí se obtiene la zona con su grupo
+        $zona = \App\Models\Zona::findOrFail($request->zona_id);
+        
+        if (!$zona->grupo_id) {
+        return back()->with('error', 'La zona seleccionada no tiene grupo asignado.');
+        }
+
+       
+
+
+
+
+
+        // OBTENER LAS REGLAS DEL GRUPO
+        $regla = ReglaReserva::where('grupo_id', $zona->grupo_id)->first();
+
+        if (!$regla) {
+            return back()->with('error', 'Este grupo no tiene reglas definidas.');
+        }
+
+        // CONTAR RESERVAS DEL USUARIO EN ESTE GRUPO
+         $fecha = $request->fecha;
+
+
+        $reservasDia = Reserva::where('user_id', $user->id)
+            ->where('grupo_id', $zona->grupo_id)
+            ->whereDate('fecha', $fecha)
+            ->where('estado', 'activa')
+            ->count();
+
+        $reservasSemana = Reserva::where('user_id', $user->id)
+            ->where('grupo_id', $zona->grupo_id)
+            ->whereBetween('fecha', [
+                Carbon::parse($fecha)->startOfWeek(),
+                Carbon::parse($fecha)->endOfWeek()
+
+            ])
+            ->where('estado', 'activa')
+            ->count();
+
+        $reservasMes = Reserva::where('user_id', $user->id)
+            ->where('grupo_id', $zona->grupo_id)
+            ->whereMonth('fecha', Carbon::parse($fecha)->month)
+            ->whereYear('fecha', Carbon::parse($fecha)->year)
+            ->where('estado', 'activa')
+            ->count();
+
+        $reservasAnio = Reserva::where('user_id', $user->id)
+            ->where('grupo_id', $zona->grupo_id)
+            ->whereYear('fecha', Carbon::parse($fecha)->year)
+            ->where('estado', 'activa')
+            ->count();
+
+        // VALIDACIONES CONTRA LAS REGLAS
+        if ($reservasDia >= $regla->max_por_dia) {
+            return back()->with('error', 'Has superado el límite de reservas por día para esta zona.');
+        }
+
+        if ($reservasSemana >= $regla->max_por_semana) {
+            return back()->with('error', 'Has superado el límite de reservas por semana para esta zona.');
+        }
+
+        if ($reservasMes >= $regla->max_por_mes) {
+            return back()->with('error', 'Has superado el límite de reservas por mes para esta zona.');
+        }
+
+        if ($reservasAnio >= $regla->max_por_anio) {
+            return back()->with('error', 'Has superado el límite de reservas por año para esta zona.');
+        }
+
         // CREACIÓN DE LA RESERVA
         // Si todo es correcto, creamos la reserva en la base de datos.
         Reserva::create([
-            'user_id' => Auth::id(), // El ID del usuario que está haciendo la reserva
-            'zona_id' => $request->zona_id,
-            'fecha' => $request->fecha,
+            'user_id' => $user->id, // El ID del usuario que está haciendo la reserva
+            'zona_id' => $zona->id, // El ID de la zona que se está reservando
+            'grupo_id' => $zona->grupo_id, // El ID del grupo al que pertenece la zona
+            'fecha' => $fecha,
             'hora_inicio' => $request->hora_inicio,
             // Calculamos la hora de fin sumando 1 hora a la de inicio
             'hora_fin' => Carbon::parse($request->hora_inicio)->addHour()->toTimeString(),

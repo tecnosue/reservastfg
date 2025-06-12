@@ -6,6 +6,10 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import { Link } from "@inertiajs/vue3";
+import { usePage } from "@inertiajs/vue3";
+const page = usePage();
+
+console.log(page.props.errors);
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -57,7 +61,7 @@ const showingNavigationDropdown = ref(false);
                                                 type="button"
                                                 class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
                                             >
-                                                {{ $page.props.auth.user.name }}
+                                                {{ page.props.auth.user.name }}
 
                                                 <svg
                                                     class="-me-0.5 ms-2 h-4 w-4"
@@ -157,10 +161,10 @@ const showingNavigationDropdown = ref(false);
                     <div class="border-t border-gray-200 pb-1 pt-4">
                         <div class="px-4">
                             <div class="text-base font-medium text-gray-800">
-                                {{ $page.props.auth.user.name }}
+                                {{ page.props.auth.user.name }}
                             </div>
                             <div class="text-sm font-medium text-gray-500">
-                                {{ $page.props.auth.user.email }}
+                                {{ page.props.auth.user.email }}
                             </div>
                         </div>
 
@@ -187,21 +191,46 @@ const showingNavigationDropdown = ref(false);
                         <slot name="header" />
                         <slot name="action" />
                     </div>
+                    <!-- Mensaje de éxito o genérico -->
                     <div
-                        v-if="$page.props.flash?.message"
+                        v-if="page.props.flash?.message"
                         :class="[
                             'p-2 rounded mb-4 mx-4',
-                            $page.props.flash.message
+                            page.props.flash.message
                                 .toLowerCase()
                                 .includes('no disponible') ||
-                            $page.props.flash.message
+                            page.props.flash.message
                                 .toLowerCase()
                                 .includes('error')
                                 ? 'bg-red-100 text-red-700'
                                 : 'bg-green-100 text-green-700',
                         ]"
                     >
-                        {{ $page.props.flash.message }}
+                        {{ page.props.flash.message }}
+                    </div>
+                    <!-- Mensaje de error explícito -->
+                    <div
+                        v-if="page.props.flash?.error"
+                        class="p-2 rounded mb-4 mx-4 bg-red-100 text-red-700"
+                    >
+                        {{ page.props.flash.error }}
+                    </div>
+                    <!-- Errores de validación de Laravel -->
+                    <div
+                        v-if="
+                            page.props.errors &&
+                            Object.keys(page.props.errors).length
+                        "
+                        class="p-2 rounded mb-4 mx-4 bg-red-100 text-red-700"
+                    >
+                        <ul class="list-disc pl-5">
+                            <li
+                                v-for="(error, key) in page.props.errors"
+                                :key="key"
+                            >
+                                {{ error }}
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </header>

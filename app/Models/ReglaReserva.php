@@ -9,6 +9,7 @@ class ReglaReserva extends Model
     protected $table = 'reglas_reserva';
 
     protected $fillable = [
+        'grupo_id',
         'max_por_dia',
         'max_por_semana',
         'max_por_mes',
@@ -16,4 +17,8 @@ class ReglaReserva extends Model
     ];
 
     public $timestamps = false;
+    public function zona()
+    {
+        return $this->belongsTo(Zona::class);
+    }
 }

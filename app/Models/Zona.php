@@ -23,7 +23,12 @@ class Zona extends Model
     {
         return $this->hasMany(ZonaDisponibilidad::class);
     }
-    public function grupo() {
+    public function grupo()
+    {
         return $this->belongsTo(Grupo::class);
+    }
+    public function reglaReserva()
+    {
+        return $this->hasOne(ReglaReserva::class);
     }
 }
