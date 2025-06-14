@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -19,7 +18,7 @@ class DatabaseSeeder extends Seeder
             ZonaDisponibilidadSeeder::class,
             ReglaReservaSeeder::class, 
 
-            // Aquí podrías llamar a otros seeders si los tuvieras
+            // Aquí podremos llamar a otros seeders 
         ]);
         
     }

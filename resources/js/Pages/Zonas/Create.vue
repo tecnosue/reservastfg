@@ -9,7 +9,7 @@ import { Head, useForm, usePage } from "@inertiajs/vue3";
 import { router } from '@inertiajs/vue3';
 // 'router' es el objeto de enrutamiento de Inertia que nos permite enviar solicitudes al backend.
 const props = defineProps({
-    grupos: Array, // <--- Asegúrate de que esta línea esté presente
+    grupos: Array, 
 });
 
 const diasSemana = [
@@ -28,7 +28,7 @@ const form = useForm({
     descripcion: "",
     imagen: null,
     disponibilidad: [],
-    grupo_id: "", // <--- AÑADE EL CAMPO grupo_id AL FORMULARIO
+    grupo_id: "", 
 
 });
 const agregarDisponibilidad = () => {
@@ -47,8 +47,7 @@ const submit = () => {
 
     // IMPORTANTE: serializar la disponibilidad como JSON
     formData.append("disponibilidad", JSON.stringify(form.disponibilidad));
-    formData.append("grupo_id", form.grupo_id); // <--- AÑADE EL grupo_id AL FormData
-
+    formData.append("grupo_id", form.grupo_id); 
 
     router.post(route("zonas.store"), formData, {
         forceFormData: true,
@@ -56,18 +55,11 @@ const submit = () => {
     });
 };
 
-// 'transform' nos permite modificar los datos del formulario antes de enviarlos.
-// En este caso, convertimos el array de disponibilidad a una cadena JSON para enviarlo correctamente al backend.
 </script>
 
 <template>
     <Head title="Crear Nueva Zona" />
-    <!-- <div
-        v-if="flashMessage"
-        class="bg-green-100 text-green-700 p-2 rounded mb-4"
-    >
-        {{ flashMessage }}
-    </div> -->
+   
 
     <AuthenticatedLayout>
         <template #header>

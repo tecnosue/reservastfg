@@ -96,14 +96,7 @@ const submitReservation = async () => {
 
          await form.post(route("reservas.store"));
          
-        //     onSuccess: () => {
-        //         // Limpiar selecciones después del éxito
-        //         resetSelections();
-        //     },
-        //     onError: (errors) => {
-        //         console.error("Error al crear reserva:", errors);
-        //     },
-        // });
+        
     } catch (error) {
         console.error("Error inesperado:", error);
     } finally {

@@ -16,12 +16,7 @@ class CheckUserIsActive
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // if (Auth::check() && !Auth::user()->activo) {
-        //     Auth::logout();
-        //     return redirect()->route('pendiente');
-        // }
-        // Si está en la ruta pendiente, no aplicar el middleware
-       // Excluir rutas específicas del middleware
+       // Excluir rutas específicas de la verificación de usuario activo
         $excludedRoutes = ['pendiente', 'logout', 'login'];
         
         if (in_array($request->route()->getName(), $excludedRoutes)) {

@@ -18,8 +18,6 @@ defineProps({
     },
 });
 
-// La función handleImageError no es necesaria si quitamos la imagen de fondo de Laravel.
-// Si quieres un fondo propio, lo manejaremos de otra forma.
 </script>
 
 <template>

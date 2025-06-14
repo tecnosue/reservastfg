@@ -11,7 +11,7 @@ function eliminarZona(zonaId) {
     }
 }
 
-// El controlador le pasa una 'prop' llamada 'zonas' a esta vista
+// El controlador le pasa una 'prop'  'zonas' a esta vista
 defineProps({
     zonas: Array,
 });

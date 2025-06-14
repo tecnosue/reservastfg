@@ -33,13 +33,8 @@ class ProfileController extends Controller
         $user = Auth::user(); // Obtenemos el usuario autenticado
         $user->fill($request->validated()); // Rellenamos con los datos validados del form request
 
-        // $request->user()->fill($request->validated());
+       
 
-        // if ($request->user()->isDirty('email')) {
-        //     $request->user()->email_verified_at = null;
-        // }
-
-        // $request->user()->save();
         if ($user->isDirty('email')) { // Verificamos si el email ha cambiado en el objeto $user
             $user->email_verified_at = null;
         }

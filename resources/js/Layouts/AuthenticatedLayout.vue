@@ -1,16 +1,15 @@
 <script setup>
-import { ref } from "vue";
-import ApplicationLogo from "@/Components/ApplicationLogo.vue";
-import Dropdown from "@/Components/Dropdown.vue";
-import DropdownLink from "@/Components/DropdownLink.vue";
-import NavLink from "@/Components/NavLink.vue";
+import { ref } from "vue"; 
+import ApplicationLogo from "@/Components/ApplicationLogo.vue"; // Componente para el logo de la aplicación
+import Dropdown from "@/Components/Dropdown.vue"; // Componente para menús desplegables
+import DropdownLink from "@/Components/DropdownLink.vue"; // Componente para enlaces de menú desplegable
+import NavLink from "@/Components/NavLink.vue"; // Componente para enlaces de navegación
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
-import { Link } from "@inertiajs/vue3";
+import { Link } from "@inertiajs/vue3"; //link para navegación
 import { usePage } from "@inertiajs/vue3";
 const page = usePage();
 
-console.log(page.props.errors);
-
+// Estado para controlar la visibilidad del menú de navegación en dispositivos móviles
 const showingNavigationDropdown = ref(false);
 </script>
 

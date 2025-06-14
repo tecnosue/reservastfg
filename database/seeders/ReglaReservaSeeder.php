@@ -10,12 +10,11 @@ class ReglaReservaSeeder extends Seeder
 {
     public function run()
     {
-        // Asumimos que tienes los grupos ya creados:
+        
         $grupoA = Grupo::where('nombre', 'Grupo A')->first();
         $grupoB = Grupo::where('nombre', 'Grupo B')->first();
 
-        // Si no existen, puedes crearlos aquí, pero normalmente ya los tienes por el GrupoSeeder
-
+        
         if ($grupoA) {
             ReglaReserva::create([
                 'grupo_id'       => $grupoA->id,
